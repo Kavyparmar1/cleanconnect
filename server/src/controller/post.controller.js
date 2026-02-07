@@ -1,39 +1,32 @@
 const postModel = require("../models/post.model")
-
+const storageService = require("../services/storage.service")
 async function createPostController(req, res) {
   try {
-    const { imageUrl, description, category, location, city } = req.body
-
+    const { description, category, location, city } = req.body
     const userId = req.user._id   // from protect middleware
-
-    // validation
-    if (!imageUrl || !description || !category || !location || !city) {
+    if (!req.file) {
       return res.status(400).json({
-        success:false,
-        message: "All fields required"
+        message: "Image required"
       })
     }
+const imageUrl = await storageService.uploadFile(req.file.buffer)
+    
+console.log(req.file);
+const parsedLocation = JSON.parse(location)
+const post = await postModel.create({
+  imageUrl,
+  description,
+  category,
+  location: {
+    lat: parsedLocation.lat,
+    lng: parsedLocation.lng,
+    areaName: parsedLocation.areaName
+  },
+  city,
+  createdBy: userId
+})
 
-    if (!location.lat || !location.lng || !location.areaName) {
-      return res.status(400).json({
-        success:false,
-        message: "Location must include lat, lng & areaName"
-      })
-    }
-
-    // create post
-    const post = await postModel.create({
-      imageUrl,
-      description,
-      category,
-      location: {
-        lat: location.lat,
-        lng: location.lng,
-        areaName: location.areaName
-      },
-      city,
-      createdBy: userId
-    })
+    console.log(post)
 
     return res.status(201).json({
       success:true,
