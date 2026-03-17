@@ -11,4 +11,5 @@ const postController = require('../controller/post.controller')
 
 routes.post('/posts',authMiddleware.protectMiddleware,upload.single('image')  ,postController.createPostController)
 routes.get('/posts', postController.getCityPostsController)
+routes.get('/posts/:postId',postController.Vollunter)
 module.exports = routes

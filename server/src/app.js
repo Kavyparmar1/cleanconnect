@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const authRoutes = require('./routes/user.routes')
 const postRoutes = require('./routes/post.routes')
+const connectRoutes = require('./routes/connect.routes')
 const morgan = require('morgan')
 const cookieParser = require("cookie-parser")
 app.use(express.json())
@@ -13,4 +14,5 @@ app.use(cookieParser())
 app.use('/api/auth',authRoutes)
 
 app.use('/api',postRoutes)
+app.use('/api',connectRoutes)
 module.exports = app;

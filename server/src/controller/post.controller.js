@@ -1,5 +1,7 @@
 const postModel = require("../models/post.model")
 const storageService = require("../services/storage.service")
+
+//post controller 
 async function createPostController(req, res) {
   try {
     const { description, category, location, city } = req.body
@@ -43,7 +45,7 @@ const post = await postModel.create({
   }
 }
 
-
+//get controller(filtered controller )
 async function getCityPostsController(req, res) {
   try {
     const { city } = req.query
@@ -76,6 +78,21 @@ async function getCityPostsController(req, res) {
   }
 }
 
+async function Vollunter(req,res){ 
+   const {postId} = req.params 
+  
+   //find post 
+   const post = await postModel.findById(postId)
+   .populate("createdBy","fullName email avatar")
+   .lean()
+   
 
+   if(!post){ 
+    return res.status(404).json({
+      success:false,
+      
+    })
+   }
+}
 
-module.exports = { createPostController ,getCityPostsController}
+module.exports = { createPostController ,getCityPostsController,Vollunter}
