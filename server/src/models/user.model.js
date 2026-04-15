@@ -3,22 +3,25 @@ const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema({
   fullName:{
     firstName:{ 
-      type:String,
-      required:true,
-      trim:true
+      type:     String,
+      required: true,
+      trim:     true,
+      maxlength: 50,
     },
     lastName:{
-      type:String,
-      required:true,
-      trim:true
+      type:    String,
+        trim:    true,
+        default: "",
     }
   },
   email:{
-    type:String,
-    required:true,
-    unique:true,
-    lowercase:true,
-    trim:true
+    type:     String,
+      required: true,
+      unique:   true,      // ← creates a unique index automatically
+      index:    true,      // ← ensures fast lookups on every query
+      trim:     true,
+      lowercase: true,     // ← always stored lowercase in DB
+      maxlength: 254,
   },
   password:{
     type:String,
@@ -40,11 +43,15 @@ const userSchema = new mongoose.Schema({
   },
   points:{
     type:Number,
-    default:0
+    default:0,
+    min:0
   }
 },{
   timestamps:true
 })
-
+// Compound index example — useful for admin queries
+userSchema.index({ role: 1, createdAt: -1 });
 const userModel = mongoose.model('User', userSchema)
+
+userSchema.index({ city: 1, createdAt: -1 })
 module.exports = userModel
